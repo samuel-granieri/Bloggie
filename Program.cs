@@ -16,6 +16,8 @@ builder.Services.AddDbContext<BloggieDbContext>(options =>
 //Inject repository
 builder.Services.AddScoped<ITagInterface, TagRepository>();
 builder.Services.AddScoped<IBlogPostInterface, BlogPostRepository>();
+builder.Services.AddScoped<IImageInterface, CloudinaryImageRepository>();
+
 
 var app = builder.Build();
 

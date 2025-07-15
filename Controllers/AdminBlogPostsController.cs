@@ -8,6 +8,7 @@ using Bloggie.Models.ViewModels;
 using Bloggie.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Bloggie.Controllers
@@ -76,15 +77,108 @@ namespace Bloggie.Controllers
             return RedirectToAction("Add");
         }
 
-        [HttpGet]
+        [HttpGet("List")]
         public async Task<IActionResult> List()
         {
-           var blogPosts = await blogPostInterface.GetAllAsync();
-            return View();
+            var blogPosts = await blogPostInterface.GetAllAsync();
+            return View(blogPosts);
         }
 
+        [HttpGet("Edit")]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var blogPost = await blogPostInterface.GetAsync(id);
+            var tagsDomainModel = await tagInterface.GetAllAsync();
+
+            if (blogPost != null)
+            {
+                var model = new EditBlogPostRequest
+                {
+                    Id = blogPost.Id,
+                    Heading = blogPost.Heading,
+                    PageTitle = blogPost.PageTitle,
+                    Content = blogPost.Content,
+                    Author = blogPost.Author,
+                    FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                    UrlHandle = blogPost.UrlHandle,
+                    ShortDescription = blogPost.ShortDescription,
+                    PublishDate = blogPost.PublishDate,
+                    Visible = blogPost.Visible,
+                    Tags = tagsDomainModel.Select(x => new SelectListItem
+                    {
+                        Text = x.Name,
+                        Value = x.Id.ToString()
+                    }),
+                    SelectedTags = blogPost.Tags.Select(x => x.Id.ToString()).ToArray()
+
+                };
+
+                return View(model);
+            }
+
+            return View(null);
+        }
+
+        [HttpPost("Edit")]
+        public async Task<IActionResult> Edit(EditBlogPostRequest editBlogPostRequest)
+        {
+            var blogPostDomainModel = new BlogPost
+            {
+                Id = editBlogPostRequest.Id,
+                Heading = editBlogPostRequest.Heading,
+                PageTitle = editBlogPostRequest.PageTitle,
+                Content = editBlogPostRequest.Content,
+                Author = editBlogPostRequest.Author,
+                ShortDescription = editBlogPostRequest.ShortDescription,
+                FeaturedImageUrl = editBlogPostRequest.FeaturedImageUrl,
+                PublishDate = editBlogPostRequest.PublishDate,
+                UrlHandle = editBlogPostRequest.UrlHandle,
+                Visible = editBlogPostRequest.Visible
+            };
+
+            //map tags to domain model
+            var selectedTags = new List<Tag>();
+            foreach (var selectedTag in editBlogPostRequest.SelectedTags)
+
+            {
+                if (Guid.TryParse(selectedTag, out var tag))
+                {
+                    var foundTag = await tagInterface.GetAsync(tag);
+
+                    if (foundTag != null)
+                    {
+                        selectedTags.Add(foundTag);
+                    }
+                }
+            }
 
 
+            blogPostDomainModel.Tags = selectedTags;
+
+            //update info
+            var updatedBlog = await blogPostInterface.UpdateAsync(blogPostDomainModel);
+
+            if (updatedBlog != null)
+            {
+                return RedirectToAction("Edit", new { id = blogPostDomainModel.Id });
+            }
+
+            return RedirectToAction("Edit");
+
+        }
+
+        [HttpPost("Delete")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var deletedBlogPost = await blogPostInterface.DeleteAsync(id);
+
+            if (deletedBlogPost != null)
+            {
+                return RedirectToAction("List");
+            }
+
+            return RedirectToAction("Edit", new { id = deletedBlogPost.Id});;
+        }
 
     }
 }

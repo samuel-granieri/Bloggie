@@ -29,7 +29,12 @@
 
         <div class="mb-3">
             <label class="form-label">Short Description</label>
-            <input type="text" class="form-control" id="content" asp-for="ShortDescription"/>
+            <input type="text" class="form-control" id="shortDescription" asp-for="ShortDescription"/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Featured Image Upload</label>
+            <input type="file" class="form-control" id="featuredImageUpload" />
         </div>
 
         <div class="mb-3">
@@ -54,9 +59,7 @@
 
         <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="visible" asp-for="Visible">
-            <label class="form-check-label" ></label>
-                IsVisible?
-            </label>
+            <label class="form-check-label" >IsVisible?</label>
         </div>
 
         <div class="mb-3">
@@ -76,3 +79,41 @@
     </form>
 
 </div>
+
+@section Scripts{
+    <script>
+        var editor = new FroalaEditor('#content');
+
+        const featuredUploadElement = document.getElementById("featuredImageUpload");
+        const featuredImageUrlElemnt = document.getElementById("featuredImageUrl");
+
+        featuredUploadElement.addEventListener('change', async (e) => {
+            console.log(e.target.files[0]);
+
+            let data = new FormData();
+            data.append('file', e.target.files[0]);
+
+            try {
+                const response = await fetch('/api/images', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': '*/*'
+                    },
+                    body: data
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    console.error("Erro:", error);
+                    return;
+                }
+
+                const result = await response.json();
+                featuredImageUrlElemnt.value = result.link;
+            } catch (error) {
+                console.error("Erro no upload:", error);
+            }
+        });
+
+    </script>
+}
