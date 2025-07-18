@@ -35,6 +35,8 @@
         <div class="mb-3">
             <label class="form-label">Featured Image Upload</label>
             <input type="file" class="form-control" id="featuredImageUpload" />
+
+            <img src="" id="featuredImageDisplay" style="display: none; width: 300px"/>
         </div>
 
         <div class="mb-3">
@@ -82,10 +84,13 @@
 
 @section Scripts{
     <script>
-        var editor = new FroalaEditor('#content');
+        var editor = new FroalaEditor('#content', {
+            imageUploadUrl: '/api/images'
+        });
 
         const featuredUploadElement = document.getElementById("featuredImageUpload");
         const featuredImageUrlElemnt = document.getElementById("featuredImageUrl");
+        const featuredImageDisplayElement = document.getElementById("featuredImageDisplay");
 
         featuredUploadElement.addEventListener('change', async (e) => {
             console.log(e.target.files[0]);
@@ -110,6 +115,8 @@
 
                 const result = await response.json();
                 featuredImageUrlElemnt.value = result.link;
+                featuredImageDisplayElement.src = result.link;
+                featuredImageDisplayElement.style.display = 'block';
             } catch (error) {
                 console.error("Erro no upload:", error);
             }

@@ -6713,6 +6713,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "CloudinaryDotNet >= 1.27.6",
+      "Microsoft.EntityFrameworkCore >= 8.0.18",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.18",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.18"
     ]
@@ -6770,6 +6771,10 @@
           "CloudinaryDotNet": {
             "target": "Package",
             "version": "[1.27.6, )"
+          },
+          "Microsoft.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[8.0.18, )"
           },
           "Microsoft.EntityFrameworkCore.SqlServer": {
             "target": "Package",

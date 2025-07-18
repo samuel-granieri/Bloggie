@@ -9,6 +9,7 @@
       "Bloggie/1.0.0": {
         "dependencies": {
           "CloudinaryDotNet": "1.27.6",
+          "Microsoft.EntityFrameworkCore": "8.0.18",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.18",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.18"
         },
