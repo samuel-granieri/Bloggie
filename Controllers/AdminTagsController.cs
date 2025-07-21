@@ -8,12 +8,14 @@ using Bloggie.Models.Domain;
 using Bloggie.Models.ViewModels;
 using Bloggie.Repositories.Implementations;
 using Bloggie.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Bloggie.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("[controller]")]
     public class AdminTagsController : Controller
     {

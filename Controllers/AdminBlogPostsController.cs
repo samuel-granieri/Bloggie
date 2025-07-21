@@ -1,18 +1,20 @@
+using Bloggie.Models.Domain;
+using Bloggie.Models.ViewModels;
+using Bloggie.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Bloggie.Models.Domain;
-using Bloggie.Models.ViewModels;
-using Bloggie.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
 
 namespace Bloggie.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("[controller]")]
     public class AdminBlogPostsController : Controller
     {

@@ -1,7 +1,9 @@
 using Bloggie.Data;
 using Bloggie.Repositories.Implementations;
 using Bloggie.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +15,32 @@ builder.Services.AddDbContext<BloggieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BloggieDbConnectionString"))
 );
 
-//Inject repository
+//Inject AuthDbContext
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BloggieAuthDbConnectionString"))
+);
+
+//Inject IdentityUser, IdentityRole no authdbcontex
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AuthDbContext>();
+
+//password config
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+});
+
+//Inject repositories
 builder.Services.AddScoped<ITagInterface, TagRepository>();
 builder.Services.AddScoped<IBlogPostInterface, BlogPostRepository>();
 builder.Services.AddScoped<IImageInterface, CloudinaryImageRepository>();
+builder.Services.AddScoped<IBlogPostLikeInterface, BlogPostLikeRepository>();
+builder.Services.AddScoped<IBlogPostCommentInterface, BlogPostCommentRepository>();
 
 
 var app = builder.Build();
@@ -33,7 +57,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

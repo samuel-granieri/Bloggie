@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Bloggie.Models.Domain;
 
-namespace Bloggie.Models.Domain
+namespace Bloggie.Models.ViewModels
 {
-    public class BlogPost
+    public class BlogDetailsViewModel
     {
         public Guid Id { get; set; }
         public string Heading { get; set; }
@@ -19,8 +16,10 @@ namespace Bloggie.Models.Domain
         public bool Visible { get; set; }
 
         public ICollection<Tag> Tags { get; set; }
-        public ICollection<BlogPostLike> Likes { get; set; }
-        public ICollection<BlogPostComment> Comments { get; set; }
+        public int TotalLikes { get; set; }
+        public bool Liked{ get; set; }
 
+        public string CommentDescription { get; set; }
+        public IEnumerable<BlogComment> Comments { get; set; }
     }
 }
