@@ -68,9 +68,9 @@ namespace Bloggie.Controllers
 
             if(signInResult != null && signInResult.Succeeded)
             {
-                if(string.IsNullOrEmpty(loginViewModel.ReturnUrl))
+                if(!string.IsNullOrEmpty(loginViewModel.ReturnUrl))
                 {
-                    return RedirectToAction(loginViewModel.ReturnUrl);
+                    return Redirect(loginViewModel.ReturnUrl);
                 }
                 return RedirectToAction("Index", "Home");
             }

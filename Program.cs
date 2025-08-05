@@ -41,6 +41,7 @@ builder.Services.AddScoped<IBlogPostInterface, BlogPostRepository>();
 builder.Services.AddScoped<IImageInterface, CloudinaryImageRepository>();
 builder.Services.AddScoped<IBlogPostLikeInterface, BlogPostLikeRepository>();
 builder.Services.AddScoped<IBlogPostCommentInterface, BlogPostCommentRepository>();
+builder.Services.AddScoped<IUserInterface, UserRepository>();
 
 
 var app = builder.Build();
