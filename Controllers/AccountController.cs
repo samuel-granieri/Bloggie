@@ -25,26 +25,29 @@ namespace Bloggie.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-            var identityUser = new IdentityUser
+            if (ModelState.IsValid)
             {
-                UserName = registerViewModel.Username,
-                Email = registerViewModel.Email
-            };
-
-            var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
-
-            //verifica se usuario foi criado
-            if (identityResult.Succeeded)
-            {
-                var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
-
-                //verifica se papel do usuario foi atribuido
-                if (roleIdentityResult.Succeeded)
+                var identityUser = new IdentityUser
                 {
-                    //Show sucess notification
-                    return RedirectToAction("Register");
-                }
+                    UserName = registerViewModel.Username,
+                    Email = registerViewModel.Email
+                };
 
+                var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
+
+                //verifica se usuario foi criado
+                if (identityResult.Succeeded)
+                {
+                    var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
+
+                    //verifica se papel do usuario foi atribuido
+                    if (roleIdentityResult.Succeeded)
+                    {
+                        //Show sucess notification
+                        return RedirectToAction("Register");
+                    }
+
+                }
             }
 
             //show erro notification
@@ -66,9 +69,9 @@ namespace Bloggie.Controllers
         {
             var signInResult = await signInManager.PasswordSignInAsync(loginViewModel.Username, loginViewModel.Password, false, false);
 
-            if(signInResult != null && signInResult.Succeeded)
+            if (signInResult != null && signInResult.Succeeded)
             {
-                if(!string.IsNullOrEmpty(loginViewModel.ReturnUrl))
+                if (!string.IsNullOrEmpty(loginViewModel.ReturnUrl))
                 {
                     return Redirect(loginViewModel.ReturnUrl);
                 }
@@ -85,7 +88,7 @@ namespace Bloggie.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-    
+
         public IActionResult AccessDenied()
         {
             return View();
